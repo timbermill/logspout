@@ -1,16 +1,19 @@
 # Logspout with GELF adapter
 
-This image contains [Logspout](https://github.com/gliderlabs/logspout) which is compiled with [GELF adapter](https://github.com/rickalm/logspout-gelf) so you can forward Docker logs in GELF format using `gelf://hostname:port` as the Logspout command.
+This image contains [Logspout](https://github.com/gliderlabs/logspout) which is compiled with [GELF adapter](https://github.com/rickalm/logspout-gelf) and [Logstash adapter](https://github.com/looplab/logspout-logstash) so you can forward Docker logs as the Logspout command:
+
+* in GELF format using `gelf://hostname:port`
+* in Logstash format using `logstash://hostname:port`
 
 ## Usage
 
-Always read the official instructions first. This image should work the same way. Just use `gelf` as the protocol scheme.
+Always read the official instructions first. This image should work the same way. Just use `gelf` and/or `logstash` as the protocol scheme.
 
-Remember to set the hostname of the container to something meaningfull, because that gets set as the source of the GELF message.
+Remember to set the hostname of the container to something meaningfull, because that gets set as the source of the messages.
 
 ### CLI example
 
-`docker run -d --name=logspout --restart=unless-stopped -h $(hostname -f) -v /var/run/docker.sock:/var/run/docker.sock vincit/logspout-gelf gelf://my.log.server:12201`
+`docker run -d --name=logspout --restart=unless-stopped -h $(hostname -f) -v /var/run/docker.sock:/var/run/docker.sock vincit/logspout-gelf gelf://my.log.server:12201,logstash://my.log.server:5000`
 
 ### Docker Compose example
 
@@ -25,7 +28,7 @@ services:
     hostname: my.message.source
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: gelf://my.log.server:12201
+    command: gelf://my.log.server:12201,logstash://my.log.server:5000
     restart: unless-stopped
 ```
 
